@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResepKita — Masakan Khas Nusantara</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#FDF6F9;--card:#fff;--muted:#F7EFF5;
+      --pk:#F2A4BF;--pkl:#FCDDE9;--pkd:#D9729A;
+      --bl:#A9CBE8;--bll:#D8EDFB;--bld:#6AACD6; 
+      --lv:#E2D4F0;--tx:#2B2035;--sub:#8A7890;--border:#EDE4EC;
+      --r:14px;--rs:8px;--t:0.18s ease;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.6;min-height:100vh}
+    nav{position:sticky;top:0;z-index:100;background:rgba(253,246,249,0.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);height:58px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--tx);text-decoration:none;white-space:nowrap}
+    .logo span{color:var(--pkd);font-style:italic}
+    .nav-right{display:flex;gap:8px;align-items:center}
+    .nav-btn{background:none;border:1.5px solid var(--border);border-radius:50px;padding:5px 14px;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;color:var(--sub);cursor:pointer;transition:all var(--t);white-space:nowrap;display:flex;align-items:center;gap:5px}
+    .nav-btn:hover,.nav-btn.active{background:var(--pkl);border-color:var(--pk);color:var(--pkd)}
+    .hero{padding:32px 16px 20px;text-align:center;max-width:580px;margin:0 auto}
+    .hero-label{display:inline-block;font-size:0.68rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--pkd);background:var(--pkl);border-radius:50px;padding:4px 14px;margin-bottom:12px}
+    .hero-title{font-family:'DM Serif Display',serif;font-size:clamp(1.7rem,5.5vw,2.4rem);font-weight:400;line-height:1.2;letter-spacing:-0.02em;margin-bottom:6px}
+    .hero-title em{font-style:italic;color:var(--bld)}
+    .hero-sub{font-size:0.85rem;color:var(--sub);margin-bottom:0;line-height:1.65}
+    .search-wrap{max-width:540px;margin:20px auto 0;padding:0 16px}
+    .search-box{display:flex;align-items:center;gap:8px;background:var(--card);border:2px solid var(--pkl);border-radius:50px;padding:8px 8px 8px 16px;transition:border-color var(--t),box-shadow var(--t)}
+    .search-box:focus-within{border-color:var(--pk);box-shadow:0 0 0 4px rgba(242,164,191,0.14)}
+    .search-box input{flex:1;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--tx);outline:none}
+    .search-box input::placeholder{color:var(--sub)}
+    .search-btn{background:linear-gradient(135deg,var(--pk),var(--bl));border:none;border-radius:50px;padding:7px 18px;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:600;color:#fff;cursor:pointer;white-space:nowrap;transition:opacity var(--t)}
+    .search-btn:hover{opacity:.86}
+    .chips{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;max-width:540px;margin:12px auto 0;padding:0 16px}
+    .chip{padding:4px 13px;border:1.5px solid var(--border);border-radius:50px;font-size:0.76rem;font-weight:500;background:var(--card);color:var(--sub);cursor:pointer;transition:all var(--t)}
+    .chip:hover{border-color:var(--pk);color:var(--pkd);background:var(--pkl)}
+    .pills-wrap{display:flex;gap:8px;overflow-x:auto;padding:22px 16px 0;max-width:900px;margin:0 auto;scrollbar-width:none}
+    .pills-wrap::-webkit-scrollbar{display:none}
+    .pill{padding:6px 16px;border:1.5px solid var(--border);border-radius:50px;font-size:0.78rem;font-weight:500;background:var(--card);color:var(--sub);cursor:pointer;white-space:nowrap;transition:all var(--t);flex-shrink:0}
+    .pill:hover{border-color:var(--pk);color:var(--pkd)}
+    .pill.active{background:linear-gradient(135deg,var(--pk),var(--bl));border-color:transparent;color:#fff;font-weight:600}
+    .section{max-width:900px;margin:0 auto;padding:18px 16px 60px}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .section-title{font-family:'DM Serif Display',serif;font-size:1.2rem}
+    .result-count{font-size:0.75rem;color:var(--sub)}
+    .recipe-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    @media(min-width:580px){.recipe-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(min-width:800px){.recipe-grid{grid-template-columns:repeat(4,1fr)}}
+    .recipe-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform var(--t),box-shadow var(--t),border-color var(--t);display:flex;flex-direction:column;position:relative}
+    .recipe-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(169,203,232,0.2);border-color:var(--bll)}
+    .card-img-wrap{position:relative;overflow:hidden}
+    .recipe-card-img{width:100%;height:130px;object-fit:cover;display:block;transition:transform .3s ease;background:#f0e4ec}
+    @media(min-width:580px){.recipe-card-img{height:150px}}
+    .recipe-card:hover .recipe-card-img{transform:scale(1.05)}
+    .card-badge{position:absolute;top:8px;left:8px;font-size:0.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pkd);background:rgba(255,255,255,0.93);border-radius:50px;padding:2px 8px}
+    .fav-btn{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.93);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background var(--t);z-index:2}
+    .fav-btn:hover{background:var(--pkl)}
+    .fav-btn svg{transition:fill var(--t)}
+    .fav-btn.active svg{fill:var(--pkd)}
+    .recipe-card-body{padding:10px 12px 12px;flex:1;display:flex;flex-direction:column}
+    .recipe-title{font-family:'DM Serif Display',serif;font-size:0.88rem;line-height:1.3;margin-bottom:4px}
+    .recipe-desc{font-size:0.72rem;color:var(--sub);line-height:1.5;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .card-meta{display:flex;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);flex-wrap:wrap}
+    .meta-pill{font-size:0.68rem;color:var(--sub);display:flex;align-items:center;gap:3px}
+    .empty{grid-column:1/-1;text-align:center;padding:50px 20px}
+    .empty-icon{width:56px;height:56px;border-radius:50%;background:var(--pkl);margin:0 auto 14px;display:flex;align-items:center;justify-content:center}
+    .empty strong{display:block;font-family:'DM Serif Display',serif;font-size:1.15rem;margin-bottom:5px}
+    .empty p{font-size:0.82rem;color:var(--sub)}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(43,32,53,0.55);z-index:200;backdrop-filter:blur(6px);align-items:flex-end;justify-content:center}
+    .overlay.open{display:flex}
+    @media(min-width:600px){.overlay{align-items:center;padding:24px}}
+    .modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;position:relative;animation:slideUp .25s ease}
+    @media(min-width:600px){.modal{border-radius:20px;max-height:88vh}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .modal-handle{width:38px;height:4px;border-radius:2px;background:var(--border);margin:11px auto 0}
+    @media(min-width:600px){.modal-handle{display:none}}
+    .modal-img{width:100%;height:220px;object-fit:cover;display:block}
+    .modal-body{padding:20px 20px 36px}
+    .modal-tag{display:inline-block;font-size:0.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--pkd);background:var(--pkl);padding:3px 12px;border-radius:50px;margin-bottom:8px}
+    .modal-title{font-family:'DM Serif Display',serif;font-size:1.45rem;font-weight:400;letter-spacing:-.02em;margin-bottom:8px;line-height:1.2}
+    .modal-desc{color:var(--sub);font-size:0.84rem;line-height:1.75;margin-bottom:18px}
+    .modal-meta-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+    .m-meta{flex:1;min-width:68px;text-align:center;padding:9px 10px;border-radius:var(--rs)}
+    .m-meta:nth-child(1){background:var(--pkl)}
+    .m-meta:nth-child(2){background:var(--bll)}
+    .m-meta:nth-child(3){background:var(--lv)}
+    .m-meta-val{font-family:'DM Serif Display',serif;font-size:0.98rem}
+    .m-meta-lbl{font-size:0.6rem;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin-top:1px}
+    .m-sec{font-size:0.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sub);margin-bottom:9px}
+    .ing-list{list-style:none;margin-bottom:20px}
+    .ing-list li{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);font-size:0.84rem}
+    .ing-list li:last-child{border-bottom:none}
+    .ing-dot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,var(--pk),var(--bl));flex-shrink:0}
+    .step-list{list-style:none;margin-bottom:20px}
+    .step-list li{display:flex;gap:12px;margin-bottom:12px;font-size:0.84rem;line-height:1.68}
+    .step-num{font-family:'DM Serif Display',serif;font-size:.95rem;color:var(--pkd);min-width:20px}
+    .modal-src{font-size:0.7rem;color:var(--sub);border-top:1px solid var(--border);padding-top:12px}
+    .modal-close{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.95);border:1.5px solid var(--border);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--tx);transition:background var(--t);z-index:10}
+    .modal-close:hover{background:var(--pkl)}
+    .add-cart-btn{width:100%;margin-top:16px;padding:11px;border:none;border-radius:50px;background:linear-gradient(135deg,var(--pk),var(--bl));color:#fff;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:opacity var(--t);display:flex;align-items:center;justify-content:center;gap:8px}
+    .add-cart-btn:hover{opacity:.86}
+    .add-cart-btn.added{background:linear-gradient(135deg,#a8d8a8,#6ec6c6)}
+    .shop-overlay{display:none;position:fixed;inset:0;background:rgba(43,32,53,0.55);z-index:300;backdrop-filter:blur(6px);align-items:flex-end;justify-content:center}
+    .shop-overlay.open{display:flex}
+    @media(min-width:600px){.shop-overlay{align-items:center;padding:24px}}
+    .shop-panel{background:var(--card);border-radius:22px 22px 0 0;width:100%;max-width:500px;max-height:88vh;overflow-y:auto;animation:slideUp .25s ease}
+    @media(min-width:600px){.shop-panel{border-radius:20px;max-height:82vh}}
+    .shop-handle{width:38px;height:4px;border-radius:2px;background:var(--border);margin:11px auto 0}
+    @media(min-width:600px){.shop-handle{display:none}}
+    .shop-header{padding:16px 18px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+    .shop-title{font-family:'DM Serif Display',serif;font-size:1.2rem}
+    .shop-close{background:none;border:none;font-size:1rem;color:var(--sub);cursor:pointer;padding:4px}
+    .shop-empty{text-align:center;padding:40px 20px;color:var(--sub);font-size:0.85rem}
+    .shop-empty strong{display:block;font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--tx);margin-bottom:6px}
+    .shop-group{padding:14px 18px 0}
+    .shop-group-title{font-size:0.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--pkd);background:var(--pkl);padding:3px 10px;border-radius:50px;display:inline-block;margin-bottom:10px}
+    .shop-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:0.85rem}
+    .shop-item:last-child{border-bottom:none}
+    .shop-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--pk);appearance:none;cursor:pointer;flex-shrink:0;transition:all var(--t);position:relative}
+    .shop-check:checked{background:linear-gradient(135deg,var(--pk),var(--bl));border-color:transparent}
+    .shop-check:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:.65rem;font-weight:700}
+    .shop-item-text{flex:1}
+    .shop-item-text.done{text-decoration:line-through;color:var(--sub)}
+    .shop-del{background:none;border:none;color:var(--sub);cursor:pointer;font-size:.85rem;padding:2px 6px;border-radius:4px;transition:color var(--t)}
+    .shop-del:hover{color:var(--pkd)}
+    .shop-footer{padding:14px 18px 28px;display:flex;gap:8px}
+    .shop-clear{flex:1;padding:9px;border:1.5px solid var(--border);border-radius:50px;background:none;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--sub);cursor:pointer;transition:all var(--t)}
+    .shop-clear:hover{border-color:var(--pkd);color:var(--pkd)}
+    .fab{position:fixed;bottom:24px;right:20px;z-index:90;background:linear-gradient(135deg,var(--pk),var(--bl));border:none;border-radius:50px;padding:12px 18px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;box-shadow:0 6px 20px rgba(242,164,191,.4);display:flex;align-items:center;gap:7px;transition:transform var(--t),opacity var(--t)}
+    .fab:hover{transform:translateY(-2px)}
+    .fab-count{background:#fff;color:var(--pkd);border-radius:50%;width:18px;height:18px;font-size:.65rem;font-weight:700;display:none;align-items:center;justify-content:center}
+    .fab-count.show{display:flex}
+    hr.div{border:none;border-top:1px solid var(--border);max-width:900px;margin:0 auto}
+    footer{max-width:900px;margin:0 auto;padding:24px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+    .footer-logo{font-family:'DM Serif Display',serif;font-size:.9rem}
+    .footer-logo span{color:var(--pkd);font-style:italic}
+    .footer-note{font-size:.7rem;color:var(--sub)}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="#">Resep<span>Kita</span></a>
+  <div class="nav-right">
+    <button class="nav-btn active" onclick="setTab('semua',this)">Semua</button>
+    <button class="nav-btn" onclick="setTab('favorit',this)">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Favorit
+    </button>
+  </div>
+</nav>
+
+<div class="hero">
+  <span class="hero-label">Warisan Kuliner Nusantara</span>
+  <h1 class="hero-title">Jelajahi cita rasa <em>Indonesia</em></h1>
+  <p class="hero-sub">Resep masakan &amp; minuman khas dari seluruh penjuru Indonesia. Lengkap, mudah, dan terpercaya.</p>
+</div>
+
+<div class="search-wrap">
+  <div class="search-box">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8A7890" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Cari resep, misal: rendang, pempek, gudeg..." oninput="handleSearch(this.value)" />
+    <button class="search-btn" onclick="handleSearch(document.getElementById('searchInput').value)">Cari</button>
+  </div>
+</div>
+
+<div class="chips">
+  <button class="chip" onclick="quickSearch('rendang')">Rendang</button>
+  <button class="chip" onclick="quickSearch('pempek')">Pempek</button>
+  <button class="chip" onclick="quickSearch('gudeg')">Gudeg</button>
+  <button class="chip" onclick="quickSearch('rawon')">Rawon</button>
+  <button class="chip" onclick="quickSearch('mie aceh')">Mie Aceh</button>
+  <button class="chip" onclick="quickSearch('kerak telor')">Kerak Telor</button>
+  <button class="chip" onclick="quickSearch('coto')">Coto Makassar</button>
+  <button class="chip" onclick="quickSearch('papeda')">Papeda</button>
+</div>
+
+<div class="pills-wrap">
+  <button class="pill active" onclick="filterCat('semua',this)">Semua</button>
+  <button class="pill" onclick="filterCat('sumatra',this)">Sumatra</button>
+  <button class="pill" onclick="filterCat('jawa',this)">Jawa</button>
+  <button class="pill" onclick="filterCat('balinusra',this)">Bali &amp; Nusa Tenggara</button>
+  <button class="pill" onclick="filterCat('kalimantan',this)">Kalimantan</button>
+  <button class="pill" onclick="filterCat('sulawesi',this)">Sulawesi</button>
+  <button class="pill" onclick="filterCat('malukupapua',this)">Maluku &amp; Papua</button>
+</div>
+
+<div class="section">
+  <div class="section-head">
+    <h2 class="section-title" id="sectionTitle">Semua Resep</h2>
+    <span class="result-count" id="resultCount"></span>
+  </div>
+  <div class="recipe-grid" id="recipeGrid"></div>
+</div>
+
+<hr class="div"/>
+<footer>
+  <div class="footer-logo">Resep<span>Kita</span></div>
+  <div class="footer-note">Dikurasi dari Sajian Sedap, Cookpad &amp; sumber terpercaya Indonesia.</div>
+</footer>
+
+<!-- RECIPE MODAL -->
+<div class="overlay" id="overlay" onclick="closeOut(event)">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+    <img class="modal-img" id="mImg" src="" alt=""/>
+    <div class="modal-body">
+      <div class="modal-tag" id="mTag"></div>
+      <h2 class="modal-title" id="mTitle"></h2>
+      <p class="modal-desc" id="mDesc"></p>
+      <div class="modal-meta-row" id="mMeta"></div>
+      <p class="m-sec">Bahan-bahan</p>
+      <ul class="ing-list" id="mIng"></ul>
+      <p class="m-sec">Langkah Membuat</p>
+      <ol class="step-list" id="mSteps"></ol>
+      <button class="add-cart-btn" id="addCartBtn" onclick="addToCart()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Tambah Bahan ke Daftar Belanja
+      </button>
+      <div class="modal-src" id="mSrc" style="margin-top:14px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHOPPING LIST PANEL -->
+<div class="shop-overlay" id="shopOverlay" onclick="closeShopOut(event)">
+  <div class="shop-panel">
+    <div class="shop-handle"></div>
+    <div class="shop-header">
+      <span class="shop-title">Daftar Belanja</span>
+      <button class="shop-close" onclick="closeShop()">&#x2715;</button>
+    </div>
+    <div id="shopContent"></div>
+    <div class="shop-footer">
+      <button class="shop-clear" onclick="clearShop()">Hapus Semua</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openShop()">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+  Belanja
+  <span class="fab-count" id="fabCount">0</span>
+</button>
+
+<script>
+const recipes = [
+
+  // ── SUMATRA ──────────────────────────────────────────────────
+  {id:0,title:"Mie Aceh",tag:"Aceh",category:"sumatra",difficulty:"Sedang",time:"45 menit",serving:"3 porsi",
+   img:"https://www.astronauts.id/blog/wp-content/uploads/2023/10/Resep-Mie-Aceh-Goreng-Simpel-Untuk-Masak-di-Rumah.jpg",
+   desc:"Mie kuning tebal yang dimasak dengan bumbu rempah khas Aceh, bisa kuah atau goreng. Biasanya ditambahkan udang, kepiting, atau daging sapi dan disajikan dengan acar, emping, dan jeruk nipis.",
+   ingredients:["300 g mie kuning tebal","200 g udang segar, kupas","100 g tauge","2 batang daun bawang","3 sdm minyak goreng","Bumbu halus: 8 bawang merah, 5 bawang putih, 5 cabai merah, 3 cm kunyit, 2 cm jahe, 2 cm lengkuas, 1 sdt ketumbar, 1 sdt jintan","Pelengkap: acar, emping, jeruk nipis, bawang goreng"],
+   steps:["Tumis bumbu halus hingga matang dan harum.","Masukkan udang, masak hingga berubah warna.","Tambahkan tauge dan daun bawang, aduk sebentar.","Masukkan mie, aduk rata bersama semua bumbu.","Untuk versi kuah: tambahkan 200 ml air kaldu, masak hingga meresap.","Sajikan dengan acar, emping, dan perasan jeruk nipis."],
+   source:"Sumber: Astronauts.id — astronauts.id/blog/resep-mie-aceh-goreng-simpel"},
+
+  {id:1,title:"Bika Ambon",tag:"Sumatera Utara",category:"sumatra",difficulty:"Sedang",time:"2 jam",serving:"12 potong",
+   img:"https://buckets.sasa.co.id/v1/AUTH_Assets/Assets/p/website/medias/page_medias/Bika_Ambon.jpg",
+   desc:"Kue khas Medan dengan tekstur berpori-pori unik berwarna kuning keemasan, legit, dan harum pandan. Meski namanya 'Ambon', kue ini justru populer sebagai oleh-oleh khas Medan.",
+   ingredients:["250 g tepung tapioka","150 g gula pasir","6 butir telur","500 ml santan kental","1 sdt ragi instan","1/2 sdt garam","3 lembar daun pandan (blender)","2 batang serai, ambil air perasannya","Sedikit kunyit untuk warna kuning"],
+   steps:["Larutkan ragi dengan sedikit santan hangat, diamkan 10 menit.","Kocok telur dan gula hingga mengembang.","Masukkan santan, air pandan, air serai, dan ragi ke kocokan telur.","Masukkan tepung tapioka dan garam, aduk rata. Saring.","Diamkan adonan 1–1,5 jam di tempat hangat hingga berbuih.","Tuang ke loyang yang sudah dipanaskan, panggang 170°C hingga matang dan berpori."],
+   source:"Sumber: Sasa.co.id — sasa.co.id/kreasisasa/recipe/bika-ambon-medan"},
+
+  {id:2,title:"Rendang Padang",tag:"Sumatera Barat",category:"sumatra",difficulty:"Sedang",time:"3 jam",serving:"6 porsi",
+   img:"https://www.frisianflag.com/storage/app/media/uploaded-files/rendang-padang.jpg",
+   desc:"Masakan daging sapi khas Minangkabau yang dimasak dengan santan dan rempah hingga kering kehitaman. Dinobatkan sebagai salah satu masakan terlezat di dunia oleh CNN Travel.",
+   ingredients:["1 kg daging sapi, potong kotak","800 ml santan kental","5 lembar daun jeruk","3 batang serai, memarkan","2 lembar daun kunyit","12 cabai merah","8 bawang merah","5 bawang putih","3 cm jahe","3 cm lengkuas","2 cm kunyit","Garam dan gula merah"],
+   steps:["Haluskan cabai, bawang merah, bawang putih, jahe, lengkuas, dan kunyit.","Masukkan daging, santan, bumbu halus, daun jeruk, serai, dan daun kunyit ke wajan besar.","Masak api sedang sambil diaduk hingga mendidih.","Kecilkan api, masak 2–2,5 jam hingga santan menyusut.","Lanjutkan api kecil hingga cokelat gelap dan kering berminyak.","Koreksi rasa dengan garam dan gula merah."],
+   source:"Sumber: Frisian Flag — frisianflag.com/resep-kami/resep-dengan-susu-cair/resep-rendang"},
+
+  {id:3,title:"Gulai Ikan Patin",tag:"Riau",category:"sumatra",difficulty:"Mudah",time:"45 menit",serving:"4 porsi",
+   img:"https://static.potretnews.com/assets/news/19042022/potretnewscom_wuagx_29957.jpg",
+   desc:"Ikan patin dimasak dalam kuah santan kuning berbumbu rempah khas Melayu Riau. Kuahnya gurih, sedikit asam dari belimbing wuluh, dan aromanya sangat menggugah selera.",
+   ingredients:["600 g ikan patin, potong","400 ml santan","5 buah belimbing wuluh","3 lembar daun salam","2 batang serai","3 cm lengkuas","Bumbu halus: 6 bawang merah, 4 bawang putih, 5 cabai merah, 3 cm kunyit, 2 cm jahe, 3 kemiri","Garam dan gula"],
+   steps:["Tumis bumbu halus bersama serai dan lengkuas hingga harum.","Tuang santan, aduk rata dan masak hingga mendidih.","Masukkan ikan patin dan belimbing wuluh.","Tambahkan daun salam, garam, dan gula.","Masak api sedang 15–20 menit hingga ikan matang.","Koreksi rasa, sajikan panas dengan nasi putih."],
+   source:"Sumber: PotretNews — m.potretnews.com/berita/baca/2022/04/19/gulai-ikan-patin-kuliner-khas-riau"},
+
+  {id:4,title:"Pempek Palembang",tag:"Sumatera Selatan",category:"sumatra",difficulty:"Sedang",time:"1,5 jam",serving:"8 porsi",
+   img:"https://www.dapurkintamani.com/wp-content/uploads/2020/11/pempek-palembang.webp",
+   desc:"Makanan khas Palembang dari ikan tenggiri dan sagu yang disajikan dengan kuah cuko asam pedas manis. Jajanan ikonik Indonesia yang telah mendunia.",
+   ingredients:["500 g ikan tenggiri giling","250 g tepung sagu","1 butir telur","1 sdt garam","Air secukupnya","Untuk cuko: 250 ml air, 200 g gula merah, 5 cabai rawit, 3 siung bawang putih, 2 sdm cuka, garam"],
+   steps:["Campur ikan giling dengan garam dan sedikit air hingga rata.","Tambahkan tepung sagu sedikit demi sedikit, uleni hingga kalis.","Bentuk adonan sesuai selera (kapal selam, lenjer, atau bulat).","Rebus dalam air mendidih hingga mengapung, tiriskan.","Goreng hingga kuning keemasan.","Untuk cuko: rebus semua bahan cuko, saring. Sajikan dengan timun."],
+   source:"Sumber: Dapur Kintamani — dapurkintamani.com/pempek-ikan-asli-palembang"},
+
+  {id:5,title:"Seruit",tag:"Lampung",category:"sumatra",difficulty:"Mudah",time:"30 menit",serving:"4 porsi",
+   img:"image/seruit.jpg",
+   desc:"Hidangan khas Lampung berupa ikan bakar atau goreng yang disantap bersama sambal tempoyak (durian fermentasi) atau sambal terasi. Kenikmatan sejati masyarakat Lampung.",
+   ingredients:["4 ekor ikan sungai (baung/patin/nila)","Bumbu oles: kunyit, garam","Sambal tempoyak: 3 sdm tempoyak, 5 cabai rawit, 3 cabai merah, 3 bawang merah, garam, gula","Lalapan: terong bakar, mentimun, kemangi"],
+   steps:["Bersihkan ikan, beri irisan kunyit dan garam, diamkan 15 menit.","Bakar atau goreng ikan hingga matang sempurna.","Haluskan cabai, bawang merah untuk sambal.","Campur dengan tempoyak, koreksi rasa garam dan gula.","Susun ikan bersama lalapan di atas piring.","Sajikan sambal tempoyak di sisi piring."],
+   source:"Sumber: Tradisi Kuliner — tradisikuliner.com/2025/11/13/seruit-kuliner-khas-lampung-rasa-pedas-asam-dan-gurih"},
+
+  {id:6,title:"Mie Bangka",tag:"Bangka Belitung",category:"sumatra",difficulty:"Mudah",time:"30 menit",serving:"2 porsi",
+   img:"https://www.superindo.co.id/images/resep/image-650x460px-(resep_mie-ayam-bangka).jpg",
+   desc:"Mie khas Bangka dengan kuah kaldu udang dan ikan yang segar, disajikan dengan topping udang, bakso ikan, dan sayuran. Cita rasanya ringan namun kaya umami.",
+   ingredients:["200 g mie telur","100 g udang segar","100 g bakso ikan","2 ikat sawi hijau","1 liter kaldu ikan/udang","4 siung bawang putih, cincang","2 sdm kecap asin","Lada, garam, minyak wijen","Pelengkap: bawang goreng, seledri"],
+   steps:["Tumis bawang putih hingga kuning keemasan.","Tuang kaldu, didihkan, bumbui dengan kecap asin, lada, garam.","Masukkan udang dan bakso ikan, masak hingga matang.","Rebus mie sesuai petunjuk kemasan, tiriskan.","Masukkan sawi hijau ke dalam kuah sebentar.","Sajikan mie di mangkuk, siram kuah beserta topping."],
+   source:"Sumber: Super Indo — superindo.co.id/artikel/info-resep/mie-ayam-bangka"},
+
+  // ── JAWA ──────────────────────────────────────────────────────
+  {id:7,title:"Sate Bandeng",tag:"Banten",category:"jawa",difficulty:"Sedang",time:"1,5 jam",serving:"4 porsi",
+   img:"https://assets.pikiran-rakyat.com/crop/188x83:1124x605/1200x675/photo/2025/05/09/1145442096.png",
+   desc:"Olahan ikan bandeng khas Serang, Banten, di mana daging ikan dilumatkan bersama bumbu rempah lalu dimasukkan kembali ke dalam kulit dan dipanggang. Tanpa duri, penuh cita rasa.",
+   ingredients:["2 ekor ikan bandeng besar","Bumbu halus: 6 bawang merah, 4 bawang putih, 4 cabai merah, 3 kemiri, 1 sdt ketumbar, 1 cm kunyit","2 butir telur","50 ml santan","Garam, gula, lada","Tusuk sate bambu"],
+   steps:["Bersihkan ikan, keluarkan daging dari kulit tanpa merobek.","Haluskan daging ikan bersama bumbu halus.","Campur dengan telur, santan, garam, gula, dan lada.","Masukkan kembali campuran ke dalam kulit ikan, padatkan.","Tusuk dengan bambu, bakar di atas bara api sambil dibolak-balik.","Sajikan dengan sambal dan lalapan."],
+   source:"Sumber: Malang Hits — malanghits.pikiran-rakyat.com/kuliner/sate-bandeng-kuliner-khas-banten"},
+
+  {id:8,title:"Kerak Telor",tag:"DKI Jakarta",category:"jawa",difficulty:"Sedang",time:"30 menit",serving:"2 porsi",
+   img:"image/Kerak telor.jpg",
+   desc:"Omelet tradisional khas Betawi dari beras ketan, telur ayam atau bebek, dengan serundeng kelapa dan ebi. Dimasak di atas wajan khusus tanpa minyak dan dibalik saat matang. Ikon kuliner Jakarta.",
+   ingredients:["100 g beras ketan, rendam 2 jam","2 butir telur ayam atau bebek","3 sdm kelapa parut sangrai (serundeng)","2 sdm ebi sangrai, haluskan","5 bawang merah goreng","2 cabai rawit, iris","Garam dan lada"],
+   steps:["Tiriskan beras ketan, masukkan ke wajan tanpa minyak di atas bara.","Beri sedikit air, biarkan ketan setengah matang.","Pecahkan telur di atas ketan, aduk rata, tambahkan bumbu.","Masukkan serundeng dan ebi, ratakan.","Balik wajan menghadap ke bawah hingga permukaan atas mengering.","Kerik dari wajan, sajikan dengan taburan bawang goreng."],
+   source:"Sumber: Wikipedia — id.wikipedia.org/wiki/Kerak_telor"},
+
+  {id:9,title:"Batagor",tag:"Jawa Barat",category:"jawa",difficulty:"Mudah",time:"45 menit",serving:"4 porsi",
+   img:"https://assets.unileversolutions.com/recipes-v3/257464-default.jpg",
+   desc:"Bakso tahu goreng khas Bandung yang disajikan dengan saus kacang pedas manis dan kecap. Jajanan pinggir jalan Sunda yang kini mendunia dan digemari semua kalangan.",
+   ingredients:["300 g ikan tenggiri giling","100 g tepung tapioka","1 butir telur","10 buah tahu pong","Garam, lada, bawang putih bubuk","Minyak goreng","Saus kacang: 200 g kacang goreng, 5 cabai, 3 bawang putih, kecap manis, air jeruk limau, garam, gula"],
+   steps:["Campur ikan giling, tepung, telur, dan bumbu hingga rata.","Isi tahu pong yang sudah dilubangi dengan adonan ikan.","Goreng dalam minyak panas hingga kuning keemasan.","Haluskan kacang, cabai, bawang putih untuk saus.","Tambahkan kecap manis, jeruk limau, dan air hangat.","Sajikan batagor disiram saus kacang."],
+   source:"Sumber: Royco — royco.co.id/r/resep-batagor-jajanan-kaki-lima-simpel-yang-bikin-kangen-bandung"},
+
+  {id:10,title:"Lumpia Semarang",tag:"Jawa Tengah",category:"jawa",difficulty:"Sedang",time:"1 jam",serving:"10 buah",
+   img:"image/lumpiasemarang.jpg",
+   desc:"Makanan khas Semarang perpaduan kuliner Tionghoa dan Jawa, berisi rebung, udang, dan telur yang dibungkus kulit lumpia renyah. Bisa disajikan goreng atau basah.",
+   ingredients:["10 lembar kulit lumpia","300 g rebung, rebus dan iris","150 g udang cincang","3 butir telur","6 bawang merah iris","4 bawang putih cincang","2 sdm kecap manis","Garam dan lada","Minyak goreng"],
+   steps:["Tumis bawang merah dan putih hingga harum.","Masukkan udang, masak hingga berubah warna.","Masukkan rebung, aduk rata. Tambahkan kecap manis, garam, lada.","Pecahkan telur, orak-arik bersama isian. Dinginkan.","Bungkus isian dengan kulit lumpia, gulung rapat.","Goreng hingga kuning keemasan, sajikan dengan saus."],
+   source:"Sumber: Kompas.com — kompas.com/food/read/2022/08/19/resep-lumpia-semarang-isi-rebung-ayam-lengkap-dengan-saus-kental"},
+
+  {id:11,title:"Gudeg Jogja",tag:"DI Yogyakarta",category:"jawa",difficulty:"Sedang",time:"4 jam",serving:"6 porsi",
+   img:"https://cnc-magazine.oramiland.com/parenting/original_images/Gudeg_Jogja.jpg",
+   desc:"Masakan ikonik Yogyakarta dari nangka muda yang dimasak perlahan dengan santan dan gula jawa hingga berwarna kecokelatan. Disajikan dengan areh, ayam opor, dan krecek pedas.",
+   ingredients:["1 kg nangka muda, potong","500 ml santan","200 g gula jawa","10 lembar daun salam","3 batang serai","5 lembar daun jeruk","8 bawang merah","5 bawang putih","3 kemiri","1 sdt ketumbar","Air kelapa secukupnya"],
+   steps:["Haluskan bawang merah, bawang putih, kemiri, dan ketumbar.","Susun nangka muda di dasar panci, taburi bumbu halus.","Tambahkan daun salam, serai, daun jeruk, dan gula jawa.","Tuang santan dan air kelapa hingga terendam.","Masak api kecil 3–4 jam hingga nangka empuk dan cokelat.","Sajikan dengan areh, ayam opor, dan krecek."],
+   source:"Sumber: Orami — orami.co.id/tools/resep/resep-gudeg-jogja"},
+
+  {id:12,title:"Rawon Surabaya",tag:"Jawa Timur",category:"jawa",difficulty:"Sedang",time:"2 jam",serving:"5 porsi",
+   img:"image/rawonsurabaya.jpeg",
+   desc:"Sup daging sapi berkuah hitam pekat khas Surabaya dengan bumbu kluwak yang memberikan warna dan rasa khas yang tidak ada duanya. Disajikan dengan taoge, telur asin, dan sambal.",
+   ingredients:["800 g daging sapi sandung lamur","5 biji kluwak tua, ambil isinya","2 liter air","8 bawang merah","5 bawang putih","3 cm lengkuas","2 cm kunyit","2 cm jahe","3 kemiri","Daun salam, serai, daun jeruk","Taoge, telur asin, sambal, kerupuk"],
+   steps:["Rebus daging hingga empuk, potong dadu, sisihkan kaldu.","Larutkan isi kluwak dengan sedikit kaldu hangat, saring.","Haluskan semua bumbu, tumis hingga harum bersama daun salam dan serai.","Masukkan tumisan dan larutan kluwak ke dalam kaldu.","Masukkan daging, masak 30 menit api kecil.","Sajikan dengan taoge, telur asin, dan sambal."],
+   source:"Sumber: Sajian Sedap — sajian-sedap.grid.id"},
+
+  // ── BALI & NUSA TENGGARA ──────────────────────────────────────
+  {id:13,title:"Ayam Betutu Bali",tag:"Bali",category:"balinusra",difficulty:"Sulit",time:"5 jam",serving:"4 porsi",
+   img:"image/ayambetutu.jpeg",
+   desc:"Ayam utuh yang dibalur bumbu base genep khas Bali, dibungkus daun pisang, dan dipanggang perlahan. Sajian upacara yang kini bisa dinikmati di rumah.",
+   ingredients:["1 ekor ayam kampung utuh","Daun pisang untuk membungkus","Base genep: 10 cabai merah, 5 bawang merah, 5 bawang putih, 3 cm kunyit, 3 cm jahe, 3 cm kencur, 2 cm lengkuas, 3 kemiri, 1 sdt terasi, daun salam, serai","Minyak kelapa, garam"],
+   steps:["Haluskan semua bahan base genep.","Tumis bumbu halus dengan minyak kelapa hingga matang dan harum.","Lumuri seluruh permukaan ayam dengan bumbu, termasuk bagian dalam.","Bungkus rapat dengan daun pisang, ikat.","Panggang dalam oven 160°C selama 4–5 jam.","Buka bungkusan, sajikan dengan nasi dan plecing kangkung."],
+   source:"Sumber: Sajian Sedap — sajian-sedap.grid.id"},
+
+  {id:14,title:"Ayam Taliwang",tag:"NTB",category:"balinusra",difficulty:"Mudah",time:"1 jam",serving:"4 porsi",
+   img:"image/ayamtaliwang.jpg",
+   desc:"Ayam bakar pedas khas Lombok dengan bumbu rempah pilihan yang meresap sempurna. Citarasa pedasnya yang khas menjadikan Ayam Taliwang sebagai duta kuliner NTB yang terkenal.",
+   ingredients:["1 ekor ayam kampung, belah dua","Bumbu halus: 10 cabai merah keriting, 5 cabai rawit, 8 bawang merah, 5 bawang putih, 3 cm kencur, 2 cm kunyit, 1 sdt terasi bakar","2 sdm kecap manis","Garam, gula","Minyak untuk menumis"],
+   steps:["Ungkep ayam dengan sedikit bumbu dan air hingga setengah matang.","Haluskan semua bahan bumbu.","Tumis bumbu halus hingga matang dan harum.","Lumuri ayam dengan bumbu tumis secara merata.","Panggang di atas bara api atau oven, sambil sesekali dioles bumbu.","Sajikan dengan plecing kangkung dan nasi putih."],
+   source:"Sumber: Cookpad Indonesia — cookpad.com"},
+
+  {id:15,title:"Se'i Sapi",tag:"NTT",category:"balinusra",difficulty:"Sedang",time:"3 jam",serving:"4 porsi",
+   img:"image/seisapi.jpeg",
+   desc:"Daging sapi asap khas Kupang, NTT, yang diiris tipis dan diasap perlahan dengan kayu kosambi hingga berwarna merah tua dan harum. Disajikan dengan sambal lu'at dan daun singkong rebus.",
+   ingredients:["500 g daging sapi (has dalam)","2 sdt garam","1 sdt merica","Daun kosambi atau kayu bakar untuk pengasapan","Sambal lu'at: cabai rawit, daun kemangi, jeruk nipis, garam"],
+   steps:["Iris daging tipis-tipis memanjang, taburi garam dan merica.","Diamkan 30 menit agar bumbu meresap.","Susun irisan daging di atas jerami atau bambu.","Asap dengan kayu kosambi selama 2–3 jam dengan api kecil.","Balik daging secara berkala agar matang merata.","Sajikan dengan sambal lu'at dan daun singkong rebus."],
+   source:"Sumber: Sajian Sedap — sajian-sedap.grid.id"},
+
+  // ── KALIMANTAN ────────────────────────────────────────────────
+  {id:16,title:"Soto Banjar",tag:"Kalimantan Selatan",category:"kalimantan",difficulty:"Mudah",time:"1 jam",serving:"5 porsi",
+   img:"image/sotobanjar.jpg",
+   desc:"Soto khas Banjarmasin berkuah bening dengan rempah aromatik seperti kayu manis dan cengkeh yang memberikan cita rasa khas Kalimantan. Disajikan dengan ketupat dan perkedel kentang.",
+   ingredients:["1 ekor ayam, potong","2 liter air","3 cm kayu manis","4 biji cengkeh","3 butir kapulaga","2 batang serai","4 lembar daun jeruk","8 bawang merah","5 bawang putih","3 cm jahe","Soun, telur rebus, perkedel, sambal"],
+   steps:["Rebus ayam dengan semua rempah hingga matang dan kaldu keluar.","Tumis bawang merah, bawang putih, dan jahe hingga harum.","Masukkan tumisan ke dalam kaldu.","Suwir daging ayam, masukkan kembali.","Masak 15 menit, koreksi garam.","Sajikan di atas soun dengan telur dan perkedel."],
+   source:"Sumber: Cookpad Indonesia — cookpad.com"},
+
+  {id:17,title:"Ayam Cincane",tag:"Kalimantan Timur",category:"kalimantan",difficulty:"Sedang",time:"1,5 jam",serving:"4 porsi",
+   img:"image/Ayamcincane.jpg",
+   desc:"Hidangan ayam khas Samarinda yang dimasak dengan bumbu rempah merah pekat dan kaya. Biasanya disajikan dalam acara adat Kutai, namun kini menjadi kebanggaan kuliner Kalimantan Timur.",
+   ingredients:["1 ekor ayam, potong 8","Bumbu halus: 10 cabai merah, 8 bawang merah, 5 bawang putih, 3 kemiri, 3 cm jahe, 3 cm lengkuas, 2 cm kunyit, 1 sdt ketumbar","3 lembar daun salam","2 batang serai","400 ml santan","Garam, gula merah"],
+   steps:["Haluskan semua bahan bumbu.","Tumis bumbu halus bersama serai dan daun salam hingga matang.","Masukkan potongan ayam, aduk hingga terbalut bumbu.","Tambahkan santan, gula merah, dan garam.","Masak api sedang 40 menit hingga kuah mengental dan meresap.","Sajikan panas dengan nasi putih."],
+   source:"Sumber: Sajian Sedap — sajian-sedap.grid.id"},
+
+  {id:18,title:"Bubur Pedas",tag:"Kalimantan Barat",category:"kalimantan",difficulty:"Mudah",time:"1 jam",serving:"5 porsi",
+   img:"image/buburpedas.jpeg",
+   desc:"Bubur khas Sambas, Kalimantan Barat, berisi berbagai sayuran dan rempah dengan aroma khas daun pakis dan daun kesum. Hidangan sarapan tradisional Melayu Kalimantan.",
+   ingredients:["200 g beras","100 g daun pakis muda","50 g kacang tanah goreng","2 batang serai","5 lembar daun kesum","Bumbu halus: 6 bawang merah, 4 bawang putih, 3 cabai merah, 2 cm kunyit, 2 cm jahe, 2 kemiri","Ikan teri goreng, garam"],
+   steps:["Masak beras menjadi bubur dengan serai hingga lembut.","Tumis bumbu halus hingga harum.","Masukkan tumisan ke dalam bubur, aduk rata.","Tambahkan daun pakis dan daun kesum.","Masak 10 menit, koreksi garam.","Sajikan dengan taburan kacang dan ikan teri goreng."],
+   source:"Sumber: Cookpad Indonesia — cookpad.com"},
+
+  // ── SULAWESI ──────────────────────────────────────────────────
+  {id:19,title:"Tinutuan",tag:"Sulawesi Utara",category:"sulawesi",difficulty:"Mudah",time:"45 menit",serving:"4 porsi",
+   img:"image/tinutuan.jpg",
+   desc:"Bubur Manado khas Sulawesi Utara yang kaya akan sayuran seperti labu kuning, bayam, dan jagung. Hidangan sehat ini dijuluki 'bubur yang tidak ada daging'-nya namun penuh gizi.",
+   ingredients:["150 g beras","100 g labu kuning, potong dadu","1 buah jagung manis, pipil","1 ikat bayam","1 ikat kangkung","2 batang serai","3 cm jahe","4 bawang merah","Daun kemangi","Garam"],
+   steps:["Masak beras dengan serai, jahe, dan bawang merah hingga menjadi bubur.","Masukkan labu kuning, masak hingga empuk.","Tambahkan jagung pipil, aduk rata.","Masukkan kangkung dan bayam, masak sebentar.","Tambahkan daun kemangi terakhir.","Koreksi garam, sajikan panas dengan ikan cakalang fufu."],
+   source:"Sumber: Sajian Sedap — sajian-sedap.grid.id"},
+
+  {id:20,title:"Coto Makassar",tag:"Sulawesi Selatan",category:"sulawesi",difficulty:"Sedang",time:"3 jam",serving:"6 porsi",
+   img:"image/cotomakasar.jpg",
+   desc:"Sup khas Makassar dari jeroan sapi dan daging yang dimasak dengan bumbu kacang dan rempah khas. Disajikan dengan ketupat atau buras, serta sambal tauco yang pedas.",
+   ingredients:["500 g daging sapi","300 g jeroan sapi (paru, babat)","100 g kacang tanah goreng, haluskan","2 liter air rebusan daging","10 bawang merah","6 bawang putih","4 kemiri","1 sdt ketumbar","1 sdt jintan","3 cm lengkuas","3 batang serai","Daun salam, garam"],
+   steps:["Rebus daging dan jeroan terpisah hingga empuk, potong dadu.","Haluskan bawang merah, bawang putih, kemiri, ketumbar, jintan.","Tumis bumbu halus dengan lengkuas dan serai hingga harum.","Masukkan kacang halus, tumis hingga beraroma.","Tuang kaldu daging, masak 20 menit.","Masukkan daging dan jeroan, koreksi rasa. Sajikan dengan ketupat."],
+   source:"Sumber: Cookpad Indonesia — cookpad.com"},
+
+  {id:21,title:"Kaledo",tag:"Sulawesi Tengah",category:"sulawesi",difficulty:"Mudah",time:"2 jam",serving:"4 porsi",
+   img:"image/kaledo.jpg",
+   desc:"Sop kaki dan lidah sapi khas Palu, Sulawesi Tengah. Kuahnya bening dan segar dengan campuran asam jawa dan rempah sederhana. Disantap bersama ubi singkong rebus.",
+   ingredients:["1 kg kaki sapi, potong","200 g lidah sapi","2 liter air","5 cm jahe, memarkan","2 batang serai","3 sdm air asam jawa","6 bawang merah","4 bawang putih","Garam dan lada","Singkong rebus untuk pendamping"],
+   steps:["Rebus kaki sapi hingga empuk, sekitar 1,5 jam.","Masukkan lidah sapi, masak 30 menit lagi.","Tumis bawang merah, bawang putih, dan jahe.","Masukkan tumisan ke dalam kaldu.","Tambahkan air asam jawa, serai, garam, lada.","Sajikan panas dengan singkong rebus."],
+   source:"Sumber: Sajian Sedap — sajian-sedap.grid.id"},
+
+  // ── MALUKU & PAPUA ────────────────────────────────────────────
+  {id:22,title:"Papeda & Ikan Kuah Kuning",tag:"Maluku & Papua",category:"malukupapua",difficulty:"Mudah",time:"45 menit",serving:"4 porsi",
+   img:"image/papeda.jpg",
+   desc:"Makanan pokok Maluku dan Papua dari sagu yang disantap dengan kuah ikan kuning berbumbu kunyit. Lengkap secara gizi, kaya budaya, dan merupakan identitas kuliner Timur Indonesia.",
+   ingredients:["200 g tepung sagu","1 liter air mendidih","500 g ikan kakap atau tongkol","400 ml air untuk kuah","5 cm kunyit","3 cm jahe","2 batang serai","5 bawang merah","3 bawang putih","2 tomat","Daun kemangi, garam, gula"],
+   steps:["Larutkan sagu dengan sedikit air dingin.","Tuang perlahan ke air mendidih sambil terus diaduk hingga bening dan kental.","Untuk kuah: tumis bumbu halus bersama serai hingga harum.","Tambahkan air, masukkan ikan.","Masak 15 menit, tambahkan tomat dan daun kemangi.","Koreksi rasa. Sajikan papeda di piring, siram kuah di atasnya."],
+   source:"Sumber: Cookpad Indonesia — cookpad.com"},
+
+  {id:23,title:"Ikan Bakar Manokwari",tag:"Papua Barat",category:"malukupapua",difficulty:"Mudah",time:"30 menit",serving:"3 porsi",
+   img:"image/ikanbakar.jpg",
+   desc:"Ikan bakar khas Manokwari yang istimewa karena sambalnya dari ikan cakalang asap (ikan roa) yang dihaluskan bersama cabai. Perpaduan ikan bakar dan sambal roa menciptakan rasa yang unik.",
+   ingredients:["2 ekor ikan kakap atau nila","Bumbu oles: garam, kunyit, jeruk nipis","Sambal roa: 5 ekor ikan roa asap, 10 cabai rawit, 5 cabai merah, 4 bawang merah, 2 bawang putih, tomat, garam","Minyak untuk menumis sambal"],
+   steps:["Bersihkan ikan, lumuri dengan garam, kunyit, dan jeruk nipis.","Diamkan 15 menit, bakar di atas bara hingga matang.","Haluskan ikan roa asap bersama cabai dan bawang.","Tumis sambal roa hingga matang dan harum.","Koreksi rasa dengan garam.","Sajikan ikan bakar dengan sambal roa dan nasi."],
+   source:"Sumber: Sajian Sedap — sajian-sedap.grid.id"},
+
+
+];
+
+// Fallback images per recipe using food-appropriate Unsplash photos
+const fallbackImgs = {
+  0:"https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&q=80",
+  1:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&q=80",
+  2:"https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=800&q=80",
+  3:"https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80",
+  4:"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80",
+  5:"https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=80",
+  6:"https://images.unsplash.com/photo-1555126634-323283e090fa?w=800&q=80",
+  7:"https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80",
+  8:"https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=800&q=80",
+  9:"https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=800&q=80",
+  10:"https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80",
+  11:"https://images.unsplash.com/photo-1516100882582-96c3a05fe590?w=800&q=80",
+  12:"https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80",
+  13:"https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=800&q=80",
+  14:"https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=800&q=80",
+  15:"https://images.unsplash.com/photo-1558030137-a56c1b996e79?w=800&q=80",
+  16:"https://images.unsplash.com/photo-1559847844-5315695dadae?w=800&q=80",
+  17:"https://images.unsplash.com/photo-1617622141573-2d0db6b76d05?w=800&q=80",
+  18:"https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&q=80",
+  19:"https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=800&q=80",
+  20:"https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=800&q=80",
+  21:"https://images.unsplash.com/photo-1576577445504-6af96477db52?w=800&q=80",
+  22:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80",
+  23:"https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=800&q=80",
+  24:"https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=800&q=80"
+};
+
+let activeCat = 'semua';
+let favorites = new Set();
+let shopList = {};
+let currentRecipeId = null;
+
+function render(data) {
+  const grid = document.getElementById('recipeGrid');
+  document.getElementById('resultCount').textContent = data.length + ' resep';
+  if (!data.length) {
+    grid.innerHTML = `<div class="empty"><div class="empty-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#D9729A" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div><strong>Tidak ditemukan</strong><p>Coba kata kunci lain atau pilih kategori berbeda.</p></div>`;
+    return;
+  }
+  grid.innerHTML = data.map(r => `
+    <div class="recipe-card" onclick="openModal(${r.id})">
+      <div class="card-img-wrap">
+        <img class="recipe-card-img" src="${r.img}" alt="${r.title}" loading="lazy" onerror="this.onerror=null;this.src='${fallbackImgs[r.id] || fallbackImgs[0]}'" />
+        <span class="card-badge">${r.tag}</span>
+        <button class="fav-btn ${favorites.has(r.id)?'active':''}" onclick="toggleFav(event,${r.id})" title="Tambah favorit">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="${favorites.has(r.id)?'#D9729A':'none'}" stroke="#D9729A" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="recipe-card-body">
+        <div class="recipe-title">${r.title}</div>
+        <div class="recipe-desc">${r.desc}</div>
+        <div class="card-meta">
+          <span class="meta-pill"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#8A7890" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${r.time}</span>
+          <span class="meta-pill"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#8A7890" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>${r.serving}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleFav(e, id) {
+  e.stopPropagation();
+  if (favorites.has(id)) favorites.delete(id);
+  else favorites.add(id);
+  const data = activeCat === 'semua' ? recipes : recipes.filter(r => r.category === activeCat);
+  render(data);
+}
+
+function filterCat(cat, btn) {
+  activeCat = cat;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const titles = {semua:'Semua Resep',sumatra:'Masakan Sumatra',jawa:'Masakan Jawa',balinusra:'Bali & Nusa Tenggara',kalimantan:'Masakan Kalimantan',sulawesi:'Masakan Sulawesi',malukupapua:'Maluku & Papua'};
+  document.getElementById('sectionTitle').textContent = titles[cat];
+  document.getElementById('searchInput').value = '';
+  render(cat === 'semua' ? recipes : recipes.filter(r => r.category === cat));
+}
+
+function handleSearch(val) {
+  const q = val.trim().toLowerCase();
+  const base = activeCat === 'semua' ? recipes : recipes.filter(r => r.category === activeCat);
+  if (!q) { render(base); return; }
+  const res = base.filter(r =>
+    r.title.toLowerCase().includes(q) ||
+    r.desc.toLowerCase().includes(q) ||
+    r.tag.toLowerCase().includes(q) ||
+    r.ingredients.some(i => i.toLowerCase().includes(q))
+  );
+  document.getElementById('sectionTitle').textContent = `Hasil: "${val.trim()}"`;
+  render(res);
+}
+
+function quickSearch(q) {
+  document.getElementById('searchInput').value = q;
+  handleSearch(q);
+  document.querySelector('.section').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function setTab(tab, btn) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab === 'favorit') {
+    document.getElementById('sectionTitle').textContent = 'Resep Favorit';
+    render(recipes.filter(r => favorites.has(r.id)));
+  } else {
+    document.getElementById('sectionTitle').textContent = 'Semua Resep';
+    activeCat = 'semua';
+    render(recipes);
+  }
+}
+
+function openModal(id) {
+  const r = recipes.find(x => x.id === id); if (!r) return;
+  currentRecipeId = id;
+  const img = document.getElementById('mImg');
+  img.src = r.img;
+  img.alt = r.title;
+  img.onerror = function(){ this.onerror=null; this.src = fallbackImgs[r.id] || fallbackImgs[0]; };
+  document.getElementById('mTag').textContent = r.tag;
+  document.getElementById('mTitle').textContent = r.title;
+  document.getElementById('mDesc').textContent = r.desc;
+  document.getElementById('mMeta').innerHTML = `
+    <div class="m-meta"><div class="m-meta-val">${r.time}</div><div class="m-meta-lbl">Waktu</div></div>
+    <div class="m-meta"><div class="m-meta-val">${r.serving}</div><div class="m-meta-lbl">Porsi</div></div>
+    <div class="m-meta"><div class="m-meta-val">${r.difficulty}</div><div class="m-meta-lbl">Tingkat</div></div>`;
+  document.getElementById('mIng').innerHTML = r.ingredients.map(i => `<li><span class="ing-dot"></span>${i}</li>`).join('');
+  document.getElementById('mSteps').innerHTML = r.steps.map((s,i) => `<li><span class="step-num">${String(i+1).padStart(2,'0')}</span><span>${s}</span></li>`).join('');
+  document.getElementById('mSrc').textContent = r.source;
+  const btn = document.getElementById('addCartBtn');
+  const inCart = shopList[r.title];
+  btn.innerHTML = inCart
+    ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg> Sudah di Daftar Belanja`
+    : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Tambah Bahan ke Daftar Belanja`;
+  btn.className = 'add-cart-btn' + (inCart ? ' added' : '');
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function addToCart() {
+  const r = recipes.find(x => x.id === currentRecipeId); if (!r) return;
+  if (shopList[r.title]) { delete shopList[r.title]; }
+  else { shopList[r.title] = r.ingredients.map(i => ({text:i, done:false})); }
+  updateFabCount();
+  openModal(currentRecipeId);
+}
+
+function updateFabCount() {
+  const total = Object.values(shopList).reduce((a,b) => a + b.length, 0);
+  const el = document.getElementById('fabCount');
+  el.textContent = total;
+  el.className = 'fab-count' + (total > 0 ? ' show' : '');
+}
+
+function openShop() { renderShop(); document.getElementById('shopOverlay').classList.add('open'); }
+function closeShop() { document.getElementById('shopOverlay').classList.remove('open'); }
+function closeShopOut(e) { if (e.target === document.getElementById('shopOverlay')) closeShop(); }
+
+function renderShop() {
+  const el = document.getElementById('shopContent');
+  const groups = Object.keys(shopList);
+  if (!groups.length) {
+    el.innerHTML = `<div class="shop-empty"><strong>Daftar masih kosong</strong>Buka resep dan klik "Tambah Bahan ke Daftar Belanja".</div>`;
+    return;
+  }
+  el.innerHTML = groups.map(name => `
+    <div class="shop-group">
+      <div class="shop-group-title">${name}</div>
+      ${shopList[name].map((item, i) => `
+        <div class="shop-item">
+          <input type="checkbox" class="shop-check" ${item.done?'checked':''} onchange="toggleItem('${name}',${i},this.checked)" />
+          <span class="shop-item-text${item.done?' done':''}">${item.text}</span>
+          <button class="shop-del" onclick="delItem('${name}',${i})">&#x2715;</button>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function toggleItem(name, i, done) { shopList[name][i].done = done; renderShop(); }
+function delItem(name, i) { shopList[name].splice(i,1); if(!shopList[name].length) delete shopList[name]; updateFabCount(); renderShop(); }
+function clearShop() { shopList = {}; updateFabCount(); renderShop(); }
+function closeModal() { document.getElementById('overlay').classList.remove('open'); document.body.style.overflow = ''; }
+function closeOut(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeShop(); } });
+
+render(recipes);
+</script>
+</body>
+</html>
